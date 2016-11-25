@@ -1,10 +1,16 @@
 'use strict';
 
+import Game from './models/game';
+
 let canvas = document.getElementById('gameViewport');
 let context = canvas.getContext('2d');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function RenderEngine() {
 
@@ -14,31 +20,6 @@ function RenderEngine() {
     for (var i in entities) {
       entities[i].render(context);
     }
-  }
-}
-
-function Game(engine) {
-
-  var self = this;
-  var entities = [];
-  this.engine = engine;
-
-  this.redraw = function() {
-
-    this.engine.render(context, entities);
-  }
-
-  this.update = function() {
-
-    for (var i in entities) {
-      entities[i].update();
-    }
-
-    self.redraw();
-  }
-
-  this.add = function(entity) {
-    entities.push(entity);
   }
 }
 
@@ -91,7 +72,7 @@ function bindCoord(n, max) {
 }
 
 // Our mediocre game
-var game = new Game(new RenderEngine());
+var game = new Game(new RenderEngine(), context);
 game.add(new Vince());
 
 // This allows us to have a full width game
@@ -106,4 +87,9 @@ function resizeCanvas() {
 }
 
 // Initial lame ass game loop
-setInterval(game.update, 50);
+function start() {
+  game.update();
+  sleep(50).then(() => start());
+}
+
+start();

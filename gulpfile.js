@@ -56,7 +56,10 @@ gulp.task('js', (cb) => {
       gulp.src(jsPathIn),
       sourcemaps.init(),
       babel({
-        presets: [ 'es2015' ]
+        presets: [ 'es2015' ],
+        plugins: [
+          'transform-es2015-modules-systemjs' // allows for es6 modules (import/export)
+        ]
       }),
       uglify(),
       sourcemaps.write('.'),
