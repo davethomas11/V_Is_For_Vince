@@ -12,7 +12,6 @@ function RenderEngine() {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (var i in entities) {
-      console.log(entities[i]);
       entities[i].render(context);
     }
   }
@@ -69,8 +68,6 @@ function Vince() {
 
   this.render = function(context) {
 
-    console.log(x);
-    console.log(y);
     context.strokeStyle = "#000";
     context.lineWidth = 4;
     context.fillStyle = '#0F0';
