@@ -1,0 +1,22 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+      "folder_exclude_patterns": [ "node_modules" ]
+		}
+	],
+    "settings": {
+        "rulers": [ 120 ],
+        "tab_size": 2,
+        "translate_tabs_to_spaces": true,
+        "use_tab_stops": true,
+        "detect_indentation": true,
+        "trim_automatic_white_space": true,
+        "trim_trailing_white_space_on_save": true,
+        "ensure_newline_at_eof_on_save": false,
+        "atomic_save": true,
+        "default_encoding": "UTF-8",
+        "default_line_ending": "unix"
+    }
+}
