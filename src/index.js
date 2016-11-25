@@ -10,7 +10,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // Our mediocre game
-let game = new Game(context, canvas);
+let game = new Game(canvas);
 game.add(new Vince(context));
 
 // This allows us to have a full width game

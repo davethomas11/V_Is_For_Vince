@@ -1,11 +1,10 @@
 'use strict';
 
 export default class RenderEngine {
-  static render(context, canvas, entities) {
+  static render(canvas, entities) {
+    let context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < entities.length; i++) {
-      entities[i].render(context);
-    }
+    entities.forEach(e => e.render(context));
   }
 }

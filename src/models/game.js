@@ -3,8 +3,7 @@
 import RenderEngine from '../services/render-engine';
 
 export default class Game {
-  constructor(context, canvas) {
-    this.context = context;
+  constructor(canvas) {
     this.canvas = canvas;
     this.entities = [];
   }
@@ -14,14 +13,11 @@ export default class Game {
   }
 
   redraw() {
-    RenderEngine.render(this.context, this.canvas, this.entities);
+    RenderEngine.render(this.canvas, this.entities);
   }
 
   update() {
-    for (let i = 0; i < this.entities.length; i++) {
-      this.entities[i].update();
-    }
-
+    this.entities.forEach(e => e.update());
     this.redraw();
   }
 }
