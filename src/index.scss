@@ -1,11 +1,13 @@
-body,html {
-  height: 100%;
-  width: 100%;
+// RESET
+* {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
 }
 
 .game-viewport {
-  border: 1px solid black;
-  width: 100%;
-  height: 100%;
-}
+  display: block;
 
+  width: 100vw;
+  height: 100vh;
+}
