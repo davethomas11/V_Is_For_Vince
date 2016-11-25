@@ -1,0 +1,26 @@
+{
+  "name": "v-is-for-vince",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "gulp && gulp watch",
+    "build": "gulp",
+    "clean": "gulp clean",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davethomas11/V_Is_For_Vince.git"
+  },
+  "author": "Tyler Smith / Dave Thomas",
+  "bugs": {
+    "url": "https://github.com/davethomas11/V_Is_For_Vince/issues"
+  },
+  "homepage": "https://github.com/davethomas11/V_Is_For_Vince#readme",
+  "devDependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.9.1"
+  }
+}
