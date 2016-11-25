@@ -72,7 +72,7 @@ function bindCoord(n, max) {
 }
 
 // Our mediocre game
-var game = new Game(new RenderEngine(), context);
+let game = new Game(context, canvas);
 game.add(new Vince());
 
 // This allows us to have a full width game

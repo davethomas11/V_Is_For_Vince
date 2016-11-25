@@ -1,9 +1,11 @@
 'use strict';
 
+import RenderEngine from '../services/render-engine';
+
 export default class Game {
-  constructor(engine, context) {
-    this.engine = engine;
+  constructor(context, canvas) {
     this.context = context;
+    this.canvas = canvas;
     this.entities = [];
   }
 
@@ -12,7 +14,7 @@ export default class Game {
   }
 
   redraw() {
-    this.engine.render(this.context, this.entities);
+    RenderEngine.render(this.context, this.canvas, this.entities);
   }
 
   update() {
