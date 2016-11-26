@@ -1,18 +1,20 @@
 'use strict';
 
 import RenderEngine from './services/render-engine';
+import FrameRate from './models/frame-rate'
 
 export default class Game {
-
-  running
 
   constructor(canvas) {
     this.canvas = canvas;
     this.gameObjects = [];
     this.running = false;
-    this.sleep = function (ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    this.gameInfo = {
+      bounds : {
+        height: canvas.height,
+        width: canvas.width
+      }
+    };
   }
 
   start() {
@@ -21,9 +23,30 @@ export default class Game {
     this.update();
   }
 
+  showFrameRate(isFrameRateVisible) {
+    if (isFrameRateVisible) {
+      this.frameRateObject = new FrameRate();
+      this.add(this.frameRateObject);
+    } else if (this.frameRateObject != null) {
+      this.frameRateObject.alive = false;
+    }
+  }
+
+  setBounds(width, height) {
+
+    this.gameInfo.bounds.width = width;
+    this.gameInfo.bounds.height = height;
+
+    this.canvas.width = width;
+    this.canvas.height = height;
+
+    this.redraw();
+  }
+
   stop() {
 
     this.running = false;
+    this.lastTime = null;
   }
 
   add(gameObject) {
@@ -38,14 +61,21 @@ export default class Game {
     RenderEngine.render(this.canvas, this.gameObjects);
   }
 
-  update() {
-    this.gameObjects.forEach(e => e.update());
+  update(timestamp) {
+
+    var delta;
+    if (this.lastTime == null) {
+      delta = 0;
+    } else {
+      delta = timestamp - this.lastTime;
+    }
+
+    this.gameObjects.forEach(e => e.update(delta, this.gameInfo));
     this.redraw();
+    this.lastTime = timestamp;
 
     if (this.running) {
-      this.sleep(50).then(() => this.update());
+      window.requestAnimationFrame((t) => this.update(t));
     }
   }
-
-
 }

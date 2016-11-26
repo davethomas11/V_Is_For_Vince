@@ -11,7 +11,8 @@ export default class Vince extends GameObject {
     this.y = 100;
   }
 
-  meander() {
+  meander(delta) {
+
     this.x += Math.round(Math.random() * 10) - 5;
     this.y += Math.round(Math.random() * 10) - 5;
 
@@ -31,7 +32,7 @@ export default class Vince extends GameObject {
     context.closePath();
   }
 
-  update() {
-    this.meander();
+  update(delta, info) {
+    this.meander(delta);
   }
 }
