@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/davethomas11/V_Is_For_Vince#readme",
   "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-polyfill": "^6.16.0",
     "babel-preset-latest": "^6.16.0",
     "concurrently": "^3.1.0",
