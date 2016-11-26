@@ -58,7 +58,8 @@ gulp.task('js', (cb) => {
       babel({
         presets: [ 'es2015' ],
         plugins: [
-          'transform-es2015-modules-systemjs' // allows for es6 modules (import/export)
+          'transform-es2015-modules-systemjs', // allows for es6 modules (import/export)
+          'transform-class-properties'
         ]
       }),
       uglify(),
