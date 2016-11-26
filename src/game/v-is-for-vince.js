@@ -8,18 +8,18 @@ export default class VinceGame extends Game {
   constructor(canvas) {
     super(canvas);
 
+    var e = this;
     // This allows us to have a full width game
-    window.addEventListener('resize', this.resizeCanvas, false);
-
-    function resizeCanvas() {
-
-    }
+    window.addEventListener('resize', function () {
+      e.setBounds(window.innerWidth, window.innerHeight);
+    }, false);
   }
 
   start() {
     super.start();
 
-    this.resizeCanvas();
+    this.showFrameRate(true);
+    this.setBounds(window.innerWidth, window.innerHeight);
     this.add(new Vince());
   }
 
@@ -27,14 +27,6 @@ export default class VinceGame extends Game {
     super.stop();
 
     this.removeAllGameObjects();
-  }
-
-  resizeCanvas() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-
-    //Every time window changes we need to redraw
-    this.redraw();
   }
 }
 
