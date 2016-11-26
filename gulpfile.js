@@ -1,70 +1,48 @@
 'use strict';
 
-const babel = require('gulp-babel');
 const del = require('del');
 const gulp = require('gulp');
 const pump = require('pump');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
+const ts = require('gulp-typescript');
 const uglify = require('gulp-uglify');
 
-const jsPathClean = 'app/**/*.js';
-const jsPathCleanMaps = 'app/**/*.js.map';
-const jsPathIn = 'src/**/*.js';
-const jsPathOut = 'app';
-const scssPathClean = 'app/**/*.css';
-const scssPathCleanMaps = 'app/**/*.css.map';
+const cleanPath = 'app/*';
+// Sass
 const scssPathIn = 'src/**/*.scss';
 const scssPathOut = 'app';
+// TypeScript
+const tsConfigFile = './tsconfig.json';
+const tsPathIn = 'src/**/*.ts';
+const tsPathOut = 'app';
+
+const tsProject = ts.createProject(tsConfigFile);
 
 /*
  * Run all build tasks.
  */
-gulp.task('default', [ 'js', 'sass' ]);
+gulp.task('default', [ 'ts', 'sass' ]);
 
 /*
  * Delete all generated files.
  */
-gulp.task('clean', [ 'clean:js', 'clean:sass' ]);
-
-/*
- * Delete the generated JS files.
- */
-gulp.task('clean:js', () => {
-  return del([
-    jsPathClean,
-    jsPathCleanMaps
-  ]);
+gulp.task('clean', () => {
+  return del([ cleanPath ]);
 });
 
 /*
- * Delete the generated CSS files.
+ * Build the TypeScript files.
  */
-gulp.task('clean:sass', () => {
-  return del([
-    scssPathClean,
-    scssPathCleanMaps
-  ])
-});
-
-/*
- * Build the JS files.
- */
-gulp.task('js', (cb) => {
+gulp.task('ts', (cb) => {
   pump(
     [
-      gulp.src(jsPathIn),
+      gulp.src(tsPathIn),
       sourcemaps.init(),
-      babel({
-        presets: [ 'es2015' ],
-        plugins: [
-          'transform-es2015-modules-systemjs', // allows for es6 modules (import/export)
-          'transform-class-properties'
-        ]
-      }),
+      tsProject(),
       uglify(),
       sourcemaps.write('.'),
-      gulp.dest(jsPathOut)
+      gulp.dest(tsPathOut)
     ],
     cb
   );
@@ -86,7 +64,7 @@ gulp.task('sass', () => {
  */
 gulp.task('watch', () => {
   // watch the JS files for changes
-  gulp.watch(jsPathIn, [ 'js' ]);
+  gulp.watch(tsPathIn, [ 'ts' ]);
 
   // watch Sass files for changes
   gulp.watch(scssPathIn, [ 'sass' ]);

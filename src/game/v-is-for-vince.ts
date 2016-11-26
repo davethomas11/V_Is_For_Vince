@@ -5,13 +5,13 @@ import Vince from './models/vince';
 
 export default class VinceGame extends Game {
 
-  constructor(canvas) {
+  constructor(canvas: HTMLCanvasElement) {
     super(canvas);
 
-    var e = this;
+    let e = this;
     // This allows us to have a full width game
-    window.addEventListener('resize', function () {
-      e.setBounds(window.innerWidth, window.innerHeight);
+    window.addEventListener('resize', () => {
+      this.setBounds(window.innerWidth, window.innerHeight);
     }, false);
   }
 
@@ -29,4 +29,3 @@ export default class VinceGame extends Game {
     this.removeAllGameObjects();
   }
 }
-
