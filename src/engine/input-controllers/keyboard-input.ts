@@ -47,6 +47,7 @@ export default class KeyboardController extends InputController {
   }
 
   keyPress(event: KeyboardEvent): void {
+
     if (!this.hasPressHandler) return;
 
     this.mappings.forEach((mapping) => {

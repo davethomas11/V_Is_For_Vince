@@ -1,5 +1,7 @@
-import ArrayUtils from '../util/array-utils'
-import Module from '../interfaces/module'
+import Module from '../modules/module';
+import Game from '../game';
+import SpawnEvent from '../events/spawn-event';
+import ArrayUtils from '../util/array-utils';
 
 abstract class GameObject {
   alive: boolean = true;
@@ -20,10 +22,19 @@ abstract class GameObject {
 
   addModule(module: Module): void {
     this.modules.push(module);
+    module.onAttach(this);
   }
 
   removeModule(module: Module): void {
     ArrayUtils.remove(module, this.modules);
+  }
+
+  spawn(gameObject: GameObject): void {
+    Game.EventBus.post(new SpawnEvent(gameObject));
+  }
+
+  getModule (type: any): Module | null {
+    return ArrayUtils.getByType(type, this.modules);
   }
 }
 

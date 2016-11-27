@@ -4,15 +4,18 @@ import FrameRate from './models/frame-rate'
 import GameObject from './models/game-object';
 import RenderEngine from './services/render-engine';
 import InputController from './input-controllers/input-controller';
+import GameEvent from './events/event';
+import EventSystem from './services/event-system';
+import ArrayUtils from './util/array-utils'
 
 export default class Game {
-  canvas: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
-  frameRateOverlay: FrameRate;
-  gameObjects: Array<GameObject>;
-  inputControllers: Array<InputController>;
-  running: boolean;
-  currentFrame: number;
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private frameRateOverlay: FrameRate;
+  private gameObjects: Array<GameObject>;
+  private static inputControllers: Array<InputController>;
+  private running: boolean;
+  private currentFrame: number;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -22,7 +25,7 @@ export default class Game {
     }
     this.context = twoDContext!;
     this.gameObjects = [];
-    this.inputControllers = [];
+    Game.inputControllers = [];
     this.running = false;
   }
 
@@ -30,7 +33,7 @@ export default class Game {
     this.running = true;
     this.update();
 
-    this.inputControllers.forEach(e => e.bind());
+    Game.inputControllers.forEach(e => e.bind());
   }
 
   showFrameRate(isFrameRateVisible: boolean): void {
@@ -56,7 +59,7 @@ export default class Game {
     this.running = false;
     this.currentFrame = 0;
 
-    this.inputControllers.forEach(e => e.unbind());
+    Game.inputControllers.forEach(e => e.unbind());
   }
 
   add(gameObject: GameObject): void {
@@ -64,7 +67,7 @@ export default class Game {
   }
 
   addInput(inputController: InputController): void {
-    this.inputControllers.push(inputController);
+    Game.inputControllers.push(inputController);
     if (this.running) inputController.bind();
   } 
 
@@ -78,15 +81,32 @@ export default class Game {
 
   update(timestamp: number = 0): void {
 
+    // Time update
     var delta = 0;
     if (timestamp > 0 && this.currentFrame > 0) {
       delta = timestamp - this.currentFrame;
     }
-
-    this.gameObjects.forEach(e => e.update(delta));
-    this.redraw();
     this.currentFrame = timestamp;
+
+    // Remove pass
+    for (var i = this.gameObjects.length - 1; i >= 0; i--) {
+      if (!this.gameObjects[i].alive) {
+        this.gameObjects.splice(i, 1);
+      }
+    } 
+
+    // Event pass
+    while (Game.events.length > 0) {
+      EventSystem.handleEvent(this, Game.events.shift());
+    }
     
+    // Udpate pass
+    this.gameObjects.forEach(e => e.update(delta));
+
+    // Draw pass
+    this.redraw();
+    
+    // Loop
     if (this.running) {
       window.requestAnimationFrame((t) => this.update(t));
     }
@@ -104,6 +124,20 @@ export default class Game {
     static get viewPortWidth(): number {
       return Game._viewPortWidth;
     }
+  }
+
+  private static events: Array<GameEvent> = [];
+
+  static EventBus = class {
+
+    static post(event: GameEvent) {
+      Game.events.push(event);
+    }
+  }
+
+  static getInputController(type: any): InputController  | null {
+
+    return ArrayUtils.getByType(type, Game.inputControllers);
   }
 };
 

@@ -1,31 +1,52 @@
-import Module from '../interfaces/module'
+import Module from './module'
 import GameObject from '../models/game-object'
 import NumberTools from '../util/number-tools'
 
-export default class VelocityModule implements Module {
+export default class VelocityModule extends Module {
+
+  readonly ANGLE_OFFSET = -1.5708 // negative 90 degeress
 
   private velocityX: VelocityDimension = new VelocityDimension();
   private velocityY: VelocityDimension = new VelocityDimension();
 
-  maxVelocity: number;
-  acceleration: number;
-  deceleration: number;
+  private maxVelocityX: number;
+  private maxVelocityY: number;
+  private acceleration: number;
+  private deceleration: number;
+  private _angle: number = 0;
 
-  constructor(maxVelocity: number, acceleration: number, deceleration: number) {
-    this.maxVelocity = maxVelocity;
+  constructor(maxVelocity: number = 0, acceleration: number = 0, deceleration: number = 0) {
+    super();
+    this.maxVelocityX = maxVelocity;
+    this.maxVelocityY = maxVelocity;
     this.acceleration = acceleration;
     this.deceleration = deceleration;
   }
 
-  update(gameObject:GameObject, deltaInMs: number): void {
+  update(gameObject: GameObject, deltaInMs: number): void {
 
     var deltaInSeconds = deltaInMs / 1000;
-    this.velocityX.update(deltaInSeconds, this.maxVelocity);
-    this.velocityY.update(deltaInSeconds, this.maxVelocity);
-
+    this.velocityX.update(deltaInSeconds, this.maxVelocityX);
+    this.velocityY.update(deltaInSeconds, this.maxVelocityY);
 
     gameObject.x += deltaInSeconds * this.velocityX.velocity;
     gameObject.y += deltaInSeconds * this.velocityY.velocity;
+
+    // if (this.velocityX.velocity != 0 || this.velocityY.velocity != 0) {
+    //   this._angle = Math.atan2(this.velocityX.velocity, -this.velocityY.velocity) + this.ANGLE_OFFSET;
+    // }
+  }
+
+  get velX() {
+    return this.velocityX.velocity;
+  }
+
+  get velY() {
+    return this.velocityY.velocity;
+  }
+
+  get angle() {
+    return this._angle;
   }
 
   accelerateRight(): void {
@@ -62,10 +83,12 @@ export default class VelocityModule implements Module {
 
   set accelerationX(pixelsPerSecond: number) {
     this.velocityX.acceleration = pixelsPerSecond;
+    this.calculateAngle();
   }
 
   set accelerationY(pixelsPerSecond: number) {
     this.velocityY.acceleration = pixelsPerSecond;
+    this.calculateAngle();
   }
 
   set decelerationX(pixelsPerSecond: number) {
@@ -75,6 +98,38 @@ export default class VelocityModule implements Module {
   set decelerationY(pixelsPerSecond: number) {
     this.velocityY.deceleration = pixelsPerSecond;
   }
+
+  constantAccelerateAtAngleXY(acceleration: number, angle: number, speed: number) {
+    this.maxVelocityX = speed * Math.cos(angle);
+    this.maxVelocityY = speed * Math.sin(angle);
+    this.accelerationX = Math.abs(acceleration) * Math.cos(angle);
+    this.accelerationY = Math.abs(acceleration) * Math.sin(angle);
+    this._angle = angle;
+  }
+
+  // TODO: This needs improvement. Angle changes needs to be smoother.
+  private calculateAngle() {
+
+    var xFactor = 0;
+    var yFactor = 0;
+    if (this.velocityX.accelerating && this.velocityY.accelerating) {
+
+      xFactor = this.velocityX.velocity;
+      yFactor = this.velocityY.velocity;
+
+    } else if (this.velocityX.accelerating) {
+
+      xFactor = this.velocityX.acceleration;
+      yFactor = this.velocityY.velocity;
+
+    } else if (this.velocityY.accelerating) {
+
+      xFactor = this.velocityX.velocity;
+      yFactor = this.velocityY.acceleration;
+    }
+
+    this._angle = Math.atan2(xFactor, -yFactor) + this.ANGLE_OFFSET;
+  }
 }
 
 class VelocityDimension {
@@ -82,6 +137,14 @@ class VelocityDimension {
   private _velocity: number = 0;
   private _acceleration: number = 0;
   private _accelerating: boolean = false;
+
+  get acceleration() {
+    return this._acceleration;
+  }
+
+  get accelerating() {
+    return this._accelerating;
+  }
 
   set acceleration(pixelsPerSecond: number) {
     this._accelerating = pixelsPerSecond === 0 ? false : true;
