@@ -1,14 +1,12 @@
 'use strict';
 
 import GameObject from '../models/game-object';
+import Game from '../game'
 
 export default class RenderEngine {
-  static render(canvas: HTMLCanvasElement, gameObjects: Array<GameObject>): void {
-    let context = canvas.getContext('2d');
-    if (!context) throw new Error('Could not get the context from the canvas');
+  static render(context: CanvasRenderingContext2D, gameObjects: Array<GameObject>): void {
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
+    context.clearRect(0, 0, Game.Info.viewPortWidth, Game.Info.viewPortHeight);
     gameObjects.forEach(e => e.render(context));
   }
 }

@@ -3,20 +3,21 @@
 import GameObject from '../../engine/models/game-object';
 import NumberTools from '../../engine/util/number-tools';
 
-export default class Vince extends GameObject {
- 
+// TODO: Base class common code in Jerry and Vince
+export default class Jerry extends GameObject {
+  
   constructor() {
     super();
 
-    this.x = 100;
-    this.y = 100;
+    this.x = 300;
+    this.y = 300;
   }
 
   render(ctx: CanvasRenderingContext2D) {
     
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 4;
-    ctx.fillStyle = '#0F0';
+    ctx.fillStyle = '#F0F';
 
     ctx.beginPath();
     ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI);
