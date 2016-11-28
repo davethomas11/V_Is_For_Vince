@@ -1,7 +1,7 @@
 
-abstract class InputController {
-  abstract bind(): void;
-  abstract unbind(): void;
+interface InputController {
+  bind(): void;
+  unbind(): void;
 }
 
-export default InputController;
+export default InputController

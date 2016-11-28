@@ -18,12 +18,11 @@ export default class ArrayUtils {
     return false;
   }
 
-  static getByType <T> (type: any, array:Array<T>): T | null {
-    var object: T | null = null;
+  static getByType <T> (type: any, array:Array<T>): T | undefined {
+    var object: T | undefined = undefined;
     array.forEach((e) => {
-      if ((<any>e).constructor.name == type.name) object = e;
+      if ((e as any).constructor.name == type.name) object = e;
     });
-
     return object;
   }
 }

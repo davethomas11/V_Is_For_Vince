@@ -3,7 +3,7 @@ import GameObject from '../../engine/models/game-object'
 import VelocityModule from '../../engine/modules/velocity-module'
 import BaseKeyboardMapping from '../../engine/input-controllers/keyboard-mapping'
 import KeyboardController from '../../engine/input-controllers/keyboard-input'
-import Game from '../../engine/game'
+import GameContext from '../../engine/models/game-context'
 import Laser from '../models/laser'
 
 export default class LaserGunModule extends Module {
@@ -11,33 +11,36 @@ export default class LaserGunModule extends Module {
   fireKey: string;
   acceleration: number;
   speed: number;
+  keyMapping: BaseKeyboardMapping;
 
   constructor(fireKey: string, acceleration: number, speed: number) {
     super();
-
     this.fireKey = fireKey;
     this.acceleration = acceleration;
     this.speed = speed;
   }
 
-  onAttach(parent: GameObject): void {
-    
-    var laserMapping = new BaseKeyboardMapping();
-    laserMapping.registerOnDown(this.fireKey, () => this.fireLaser(parent));
-    var controller = Game.getInputController(KeyboardController)
-
+  onAttach(parent: GameObject, context: GameContext): void {
+    this.keyMapping = new BaseKeyboardMapping();
+    this.keyMapping.registerOnDown(this.fireKey, () => this.fireLaser(parent));
+    let controller = context.getInputController(KeyboardController) as KeyboardController
     if (controller != null) {
-      (controller as KeyboardController).attachKeyboardMapping(laserMapping);
+      controller.attachKeyboardMapping(this.keyMapping);
+    }
+  }
+
+  onDetach(parent: GameObject, context: GameContext): void {
+    let controller = context.getInputController(KeyboardController) as KeyboardController
+    if (controller != null) {
+      controller.removeKeyboardMapping(this.keyMapping);
     }
   }
 
   fireLaser(gameObject: GameObject): void {
-
-    var module = gameObject.getModule(VelocityModule);
+    let module = gameObject.getModule(VelocityModule);
     if (module != null) {
-
-      var velocityModule = module as VelocityModule;
-      var laser = new Laser(this.acceleration, velocityModule.angle, this.speed);
+      let velocityModule = module as VelocityModule;
+      let laser = new Laser(this.acceleration, velocityModule.angle, this.speed);
       laser.x = gameObject.x;
       laser.y = gameObject.y;
       gameObject.spawn(laser);

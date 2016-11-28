@@ -32,8 +32,8 @@ export default class Vince extends GameObject {
     ctx.closePath();
 
     ctx.beginPath();
-    var x = this.x + 15 * Math.cos(velocityModule.angle);
-    var y = this.y + 15 * Math.sin(velocityModule.angle);
+    let x = this.x + 15 * Math.cos(velocityModule.angle);
+    let y = this.y + 15 * Math.sin(velocityModule.angle);
     ctx.fillStyle = "#30F"
     ctx.lineWidth = 2;
     ctx.arc(x, y, 20, 0, 2 * Math.PI);

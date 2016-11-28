@@ -2,12 +2,16 @@ import Module from '../modules/module';
 import Game from '../game';
 import SpawnEvent from '../events/spawn-event';
 import ArrayUtils from '../util/array-utils';
+import GameContext from './game-context';
+import EventBus from '../services/event-system'
 
 abstract class GameObject {
   alive: boolean = true;
   x: number = 0;
   y: number = 0;
-  modules: Array<Module> = [];
+  context: GameContext | undefined;
+
+  private modules: Array<Module> = [];
 
   //TODO: placeholder for base GameObject
   constructor() {}
@@ -22,7 +26,6 @@ abstract class GameObject {
 
   addModule(module: Module): void {
     this.modules.push(module);
-    module.onAttach(this);
   }
 
   removeModule(module: Module): void {
@@ -30,11 +33,23 @@ abstract class GameObject {
   }
 
   spawn(gameObject: GameObject): void {
-    Game.EventBus.post(new SpawnEvent(gameObject));
+    if (this.context) {
+      EventBus.post(this.context, new SpawnEvent(gameObject));
+    }
   }
 
-  getModule (type: any): Module | null {
+  getModule (type: any): Module | undefined {
     return ArrayUtils.getByType(type, this.modules);
+  }
+
+  detach(context: GameContext): void {
+    this.context = undefined;
+    this.modules.forEach(m => m.onDetach(this, context));
+  }
+
+  attach(context: GameContext): void {
+    this.context = context;
+    this.modules.forEach(m => m.onAttach(this, context));
   }
 }
 

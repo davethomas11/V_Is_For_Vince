@@ -2,7 +2,7 @@ import KeyboardMapping from './keyboard-mapping'
 import ArrayUtils from './../util/array-utils'
 import InputController from './input-controller'
 
-export default class KeyboardController extends InputController {
+export default class KeyboardController implements InputController {
 
   private mappings: Array<KeyboardMapping> = [];
 

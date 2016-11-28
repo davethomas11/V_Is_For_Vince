@@ -33,29 +33,33 @@ export default class VinceGame extends Game {
     this.init();
   }
 
+  getUniqueGameName(): string {
+    return "VisForVince";
+  }
+
   init() {
     this.keyboard = new KeyboardController;
     super.addInput(this.keyboard); // Refactor this. Maybe it doesn't need to be attached to base game engine
 
     this.vince = new Vince();
-    var vinceKeys = new Keyset("ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown");
+    let vinceKeys = new Keyset("ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown");
     this.preparePlayer(this.vince, vinceKeys);
 
     this.jerry = new Jerry();
-    var jerryKeys = new Keyset("KeyA", "KeyW", "KeyD", "KeyS");
+    let jerryKeys = new Keyset("KeyA", "KeyW", "KeyD", "KeyS");
     this.preparePlayer(this.jerry, jerryKeys);
 
     this.bart = new Bart();
-    var bartKeys = new Keyset("KeyJ", "KeyI", "KeyL", "KeyK");
+    let bartKeys = new Keyset("KeyJ", "KeyI", "KeyL", "KeyK");
     this.preparePlayer(this.bart, bartKeys);
 
   }
 
   //temporary utility function
   preparePlayer(object: GameObject, keyset: Keyset) {
-    var velocity = new VelocityModule(this.VEL, this.ACCEL, this.DECEL);
+    let velocity = new VelocityModule(this.VEL, this.ACCEL, this.DECEL);
     object.addModule(velocity);
-    var mapping = new BasicKeyboardMovementMapping(velocity, keyset);
+    let mapping = new BasicKeyboardMovementMapping(velocity, keyset);
     this.keyboard.attachKeyboardMapping(mapping);
   }
 

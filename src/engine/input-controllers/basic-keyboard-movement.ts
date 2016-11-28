@@ -9,15 +9,15 @@ export class BasicKeyboardMovementMapping extends KeyboardMapping {
 
     this.velocityModule = velocityModule;
 
-    super.registerOnDown(keys.left, () => this.velocityModule.accelerateLeft());
-    super.registerOnDown(keys.right, () => this.velocityModule.accelerateRight());
-    super.registerOnDown(keys.up, () => this.velocityModule.accelerateUp());
-    super.registerOnDown(keys.down, () => this.velocityModule.accelerateDown());
+    this.registerOnDown(keys.left, () => this.velocityModule.accelerateLeft());
+    this.registerOnDown(keys.right, () => this.velocityModule.accelerateRight());
+    this.registerOnDown(keys.up, () => this.velocityModule.accelerateUp());
+    this.registerOnDown(keys.down, () => this.velocityModule.accelerateDown());
 
-    super.registerOnUp(keys.left, () => this.velocityModule.decelerateLeft());
-    super.registerOnUp(keys.right, () => this.velocityModule.decelerateRight());
-    super.registerOnUp(keys.up, () => this.velocityModule.decelerateUp());
-    super.registerOnUp(keys.down, () => this.velocityModule.decelerateDown());
+    this.registerOnUp(keys.left, () => this.velocityModule.decelerateLeft());
+    this.registerOnUp(keys.right, () => this.velocityModule.decelerateRight());
+    this.registerOnUp(keys.up, () => this.velocityModule.decelerateUp());
+    this.registerOnUp(keys.down, () => this.velocityModule.decelerateDown());
   }
 }
 

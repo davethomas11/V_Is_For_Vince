@@ -16,5 +16,6 @@
   },
   "files.encoding": "utf8",
   "files.eol": "\n",
-  "files.trimTrailingWhitespace": false
+  "files.trimTrailingWhitespace": false,
+  "typescript.tsdk": "./node_modules/typescript/lib"
 }

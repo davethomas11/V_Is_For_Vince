@@ -5,35 +5,42 @@ import GameObject from './models/game-object';
 import RenderEngine from './services/render-engine';
 import InputController from './input-controllers/input-controller';
 import GameEvent from './events/event';
-import EventSystem from './services/event-system';
+import EventBus from './services/event-system';
 import ArrayUtils from './util/array-utils'
+import GameContext from './models/game-context'
 
-export default class Game {
+abstract class Game implements GameContext {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
   private frameRateOverlay: FrameRate;
   private gameObjects: Array<GameObject>;
-  private static inputControllers: Array<InputController>;
+  private inputControllers: Array<InputController>;
   private running: boolean;
   private currentFrame: number;
+  private viewPortWidth: number = 0;
+  private viewPortHeight: number = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
+    this.viewPortWidth = canvas.width;
+    this.viewPortHeight = canvas.height;
     let twoDContext = canvas.getContext('2d');
     if (twoDContext == null) {
       throw new Error('Could not get the context from the canvas');
     }
-    this.context = twoDContext!;
+    this.context = twoDContext;
     this.gameObjects = [];
-    Game.inputControllers = [];
+    this.inputControllers = [];
     this.running = false;
   }
+
+  abstract getUniqueGameName(): string;
 
   start(): void {
     this.running = true;
     this.update();
 
-    Game.inputControllers.forEach(e => e.bind());
+    this.inputControllers.forEach(e => e.bind());
   }
 
   showFrameRate(isFrameRateVisible: boolean): void {
@@ -46,8 +53,8 @@ export default class Game {
   }
 
   setBounds(width: number, height: number): void {
-    Game._viewPortWidth = width;
-    Game._viewPortHeight = height;
+    this.viewPortWidth = width;
+    this.viewPortHeight = height;
 
     this.canvas.width = width;
     this.canvas.height = height;
@@ -59,24 +66,35 @@ export default class Game {
     this.running = false;
     this.currentFrame = 0;
 
-    Game.inputControllers.forEach(e => e.unbind());
+    this.inputControllers.forEach(e => e.unbind());
   }
 
   add(gameObject: GameObject): void {
+    gameObject.attach(this);
     this.gameObjects.push(gameObject);
   }
 
+  remove(gameObject: GameObject): void {
+    let index = this.gameObjects.indexOf(gameObject);
+    if (index != -1) {
+      this.gameObjects.splice(index, 1);
+      gameObject.detach(this);
+    }
+  }
+
   addInput(inputController: InputController): void {
-    Game.inputControllers.push(inputController);
+    this.inputControllers.push(inputController);
     if (this.running) inputController.bind();
   } 
 
   removeAllGameObjects(): void {
-    this.gameObjects = [];
+    for (let i = this.gameObjects.length - 1; i >= 0; i--) {
+      this.remove(this.gameObjects[i]);
+    } 
   }
 
   redraw(): void {
-    RenderEngine.render(this.context, this.gameObjects);
+    RenderEngine.render(this.context, this.gameObjects, this);
   }
 
   update(timestamp: number = 0): void {
@@ -89,18 +107,16 @@ export default class Game {
     this.currentFrame = timestamp;
 
     // Remove pass
-    for (var i = this.gameObjects.length - 1; i >= 0; i--) {
+    for (let i = this.gameObjects.length - 1; i >= 0; i--) {
       if (!this.gameObjects[i].alive) {
-        this.gameObjects.splice(i, 1);
+        this.remove(this.gameObjects[i]);
       }
     } 
 
     // Event pass
-    while (Game.events.length > 0) {
-      EventSystem.handleEvent(this, Game.events.shift());
-    }
+    EventBus.handleEvents(this);
     
-    // Udpate pass
+    // Update pass
     this.gameObjects.forEach(e => e.update(delta));
 
     // Draw pass
@@ -112,32 +128,17 @@ export default class Game {
     }
   }
 
-  private static _viewPortWidth: number = 0;
-  private static _viewPortHeight: number = 0;
-
-  static Info = class {
-
-    static get viewPortHeight(): number {
-      return Game._viewPortHeight;
-    }
-
-    static get viewPortWidth(): number {
-      return Game._viewPortWidth;
-    }
+  getViewPortWidth(): number {
+    return this.viewPortWidth;
   }
 
-  private static events: Array<GameEvent> = [];
-
-  static EventBus = class {
-
-    static post(event: GameEvent) {
-      Game.events.push(event);
-    }
+  getViewPortHeight(): number {
+    return this.viewPortHeight
   }
 
-  static getInputController(type: any): InputController  | null {
-
-    return ArrayUtils.getByType(type, Game.inputControllers);
+  getInputController(type: any): InputController | undefined {
+    return ArrayUtils.getByType(type, this.inputControllers);
   }
 };
 
+export default Game
