@@ -1,31 +1,25 @@
 'use strict';
 
-import GameInfo from '../../engine/interfaces/game-info';
 import GameObject from '../../engine/models/game-object';
-import TimeService from '../../engine/services/time-service';
 import NumberTools from '../../engine/util/number-tools';
+import LaserGunModule from '../modules/laser-module';
+import VelocityModule from '../../engine/modules/velocity-module';
 
 export default class Vince extends GameObject {
-  private readonly SPEED = 0.1;
-
+ 
   constructor() {
     super();
 
     this.x = 100;
     this.y = 100;
+
+    this.addModule(new LaserGunModule("Space", 5000, 750));
   }
 
-  meander() {
-    console.log(TimeService.delta);
-    this.x += (Math.random() - 0.5) * this.SPEED * TimeService.delta;
-    this.y += (Math.random() - 0.5) * this.SPEED * TimeService.delta;
-
-    this.x = NumberTools.clamp(this.x, 60, window.innerWidth);
-    this.y = NumberTools.clamp(this.y, 60, window.innerHeight);
-  }
-
-  render(ctx: CanvasRenderingContext2D | null) {
-    if (ctx === null) throw new Error('Context is null');
+  render(ctx: CanvasRenderingContext2D) {
+    
+    var velocityModule = this.getModule(VelocityModule) as VelocityModule;
+    
 
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 4;
@@ -33,12 +27,26 @@ export default class Vince extends GameObject {
 
     ctx.beginPath();
     ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    let x = this.x + 15 * Math.cos(velocityModule.angle);
+    let y = this.y + 15 * Math.sin(velocityModule.angle);
+    ctx.fillStyle = "#30F"
+    ctx.lineWidth = 2;
+    ctx.arc(x, y, 20, 0, 2 * Math.PI);
+
     ctx.stroke();
     ctx.fill();
     ctx.closePath();
   }
 
-  update(gameInfo: GameInfo) {
-    this.meander();
+  update(delta: number) {
+    super.update(delta);
+
+    this.x = NumberTools.clamp(this.x, 50, window.innerWidth - 50);
+    this.y = NumberTools.clamp(this.y, 50, window.innerHeight - 50);
   }
 }

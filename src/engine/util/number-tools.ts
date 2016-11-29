@@ -1,5 +1,8 @@
 'use strict';
 
+import Rect from '../geometry/rect'
+import Point from '../geometry/point'
+
 export default class NumberTools {
   /**
    * Clamp a number between a given maximum and minimum value. Any number below the minimum will be brought up to the
@@ -32,5 +35,25 @@ export default class NumberTools {
 
     let multiplier = Math.pow(10, Math.floor(decimalPlaces));
     return (Math.round(num * multiplier) / multiplier);
+  }
+
+  static rectContainsPoint(rect: Rect, point: Point): boolean {
+    let containsX = point.x >= rect.x && point.x <= rect.width;
+    let containsY = point.y >= rect.y && point.y <= rect.height;
+    return containsX && containsY;
+  }
+
+  static stepTowards(from: number, to: number, step:number = 1): number {
+    if (from < to ) {
+      from += step;
+      if (from > to) from = to;
+      return from;
+    } else if (from > to) {
+      from -= step;
+      if (from < to) from = to;
+      return from;
+    } else {
+      return to;
+    }
   }
 }
