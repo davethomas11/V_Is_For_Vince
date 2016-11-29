@@ -42,4 +42,18 @@ export default class NumberTools {
     let containsY = point.y >= rect.y && point.y <= rect.height;
     return containsX && containsY;
   }
+
+  static stepTowards(from: number, to: number, step:number = 1): number {
+    if (from < to ) {
+      from += step;
+      if (from > to) from = to;
+      return from;
+    } else if (from > to) {
+      from -= step;
+      if (from < to) from = to;
+      return from;
+    } else {
+      return to;
+    }
+  }
 }
