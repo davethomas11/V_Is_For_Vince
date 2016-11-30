@@ -139,7 +139,7 @@ abstract class Game implements GameContext {
     this.physicsDeltaAccumulator += delta;
     while (this.physicsDeltaAccumulator > this.PHYSICS_TIME_STEP * 1000) {
       this.physicsStep();
-      this.physicsDeltaAccumulator -= this.PHYSICS_TIME_STEP;
+      this.physicsDeltaAccumulator -= this.PHYSICS_TIME_STEP * 1000;
     }
 
     // Loop
