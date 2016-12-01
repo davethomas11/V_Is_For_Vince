@@ -51,6 +51,7 @@ abstract class GameObject {
     this.context = context;
     this.modules.forEach(m => m.onAttach(this, context));
   }
+  
 }
 
 export default GameObject;

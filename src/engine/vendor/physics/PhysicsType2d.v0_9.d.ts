@@ -1982,5 +1982,3 @@ declare module PhysicsType2d.Dynamics.Joints {
         private m_gamma;
     }
 }
-
-export default PhysicsType2d

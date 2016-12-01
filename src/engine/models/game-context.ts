@@ -1,5 +1,4 @@
 import InputController from '../input-controllers/input-controller'
-import PhysicsType2d from '../vendor/physics/PhysicsType2d.v0_9'
 
 // Publicly exposed engine data and setters for GameObjects
 interface GameContext {

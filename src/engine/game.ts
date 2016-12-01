@@ -8,7 +8,6 @@ import GameEvent from './events/event';
 import EventBus from './services/event-system';
 import ArrayUtils from './util/array-utils';
 import GameContext from './models/game-context';
-import PhysicsType2d from './vendor/physics/PhysicsType2d.v0_9'
 
 abstract class Game implements GameContext {
 
@@ -51,8 +50,6 @@ abstract class Game implements GameContext {
   start(): void {
     this.running = true;
     this.update();
-    this.physicsStep();
-
     this.inputControllers.forEach(e => e.bind());
   }
 
