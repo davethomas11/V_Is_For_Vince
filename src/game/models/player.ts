@@ -4,7 +4,7 @@ import GameObject from '../../engine/models/game-object';
 import NumberTools from '../../engine/util/number-tools';
 import LaserGunModule from '../modules/laser-module';
 import VelocityModule from '../../engine/modules/velocity-module';
-import { PhysicsModule, BodyDefinitionFactory } from '../../engine/modules/physics-module';
+import { PhysicsModule, PhysicsConversions, BodyDefinitionFactory } from '../../engine/modules/physics-module';
 import { BasicKeyboardMovementMapping, Keyset } from '../../engine/input-controllers/basic-keyboard-movement';
 import KeyboardController from '../../engine/input-controllers/keyboard-input';
 import PlayerConfig from './player-config';
@@ -78,18 +78,20 @@ export default class Player extends GameObject implements BodyDefinitionFactory 
   getBodyDefinition(): PhysicsType2d.Dynamics.BodyDefinition {
     let bodyDef = new PhysicsType2d.Dynamics.BodyDefinition();
     bodyDef.type = PhysicsType2d.Dynamics.BodyType.DYNAMIC;
-    bodyDef.position = new PhysicsType2d.Vector2(this.x, this.y);
+    let x = PhysicsConversions.toMetres(this.x);
+    let y = PhysicsConversions.toMetres(this.y);
+    bodyDef.position = new PhysicsType2d.Vector2(x, y);
+    bodyDef.linearDamping = 0.1;
     return bodyDef;
   }
 
   getFixtures(): Array<PhysicsType2d.Dynamics.FixtureDefinition> {
     let fd = new PhysicsType2d.Dynamics.FixtureDefinition();
     let shape = new PhysicsType2d.Collision.Shapes.CircleShape();
-    shape.m_radius = this.radius;
-    shape.m_p = new PhysicsType2d.Vector2(this.x + this.radius, this. y + this.radius);
+    let r = PhysicsConversions.toMetres(this.radius);
+    shape.m_radius = r;
     fd.shape = shape;
-    fd.density = 1.0;
-    fd.friction = 0.3;
+    fd.density = 0.25;
     return [fd];
   }
 }

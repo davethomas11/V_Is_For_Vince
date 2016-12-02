@@ -1,7 +1,7 @@
 import Module from './module'
 import GameObject from '../models/game-object'
 import NumberTools from '../util/number-tools'
-import { PhysicsModule } from './physics-module'
+import { PhysicsModule, PhysicsConversions } from './physics-module'
 
 export default class VelocityModule extends Module {
 
@@ -33,8 +33,8 @@ export default class VelocityModule extends Module {
 
     let physicsModule = gameObject.getModule(PhysicsModule);
     if (physicsModule != undefined) {
-      this.vector.x = this.velocityX.velocity;
-      this.vector.y = this.velocityY.velocity;
+      this.vector.x = PhysicsConversions.toMetres(this.velocityX.velocity);
+      this.vector.y = PhysicsConversions.toMetres(this.velocityY.velocity);
       (physicsModule as PhysicsModule).setVelocity(this.vector);
     } else {
       gameObject.x += deltaInSeconds * this.velocityX.velocity;

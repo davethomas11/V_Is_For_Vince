@@ -2,9 +2,22 @@ import Module from './module'
 import GameObject from '../models/game-object'
 import GameContext from '../models/game-context'
 
-export  interface BodyDefinitionFactory {
+export interface BodyDefinitionFactory {
   getBodyDefinition(): PhysicsType2d.Dynamics.BodyDefinition;
   getFixtures(): Array<PhysicsType2d.Dynamics.FixtureDefinition>;
+}
+
+export class PhysicsConversions {
+  private static readonly METRES_PER_PIXEL = 0.02;
+  private static readonly PIXELS_PER_METRE = 50;
+  
+  static toMetres(pixels: number): number {
+    return pixels * this.METRES_PER_PIXEL;
+  }
+
+  static toPixels(metres: number): number {
+    return metres * this.PIXELS_PER_METRE;
+  }
 }
 
 export class PhysicsModule extends Module {
@@ -29,8 +42,8 @@ export class PhysicsModule extends Module {
   }
 
   update(parent: GameObject, deltaMs: number): void {
-    parent.x = this.body.GetPosition().x;
-    parent.y = this.body.GetPosition().y;
+    parent.x = PhysicsConversions.toPixels(this.body.GetPosition().x);
+    parent.y = PhysicsConversions.toPixels(this.body.GetPosition().y);
   }
 
   applyForce(vector: PhysicsType2d.Vector2): void {
