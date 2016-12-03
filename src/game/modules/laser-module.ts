@@ -40,9 +40,7 @@ export default class LaserGunModule extends Module {
     let module = gameObject.getModule(VelocityModule);
     if (module != null) {
       let velocityModule = module as VelocityModule;
-      let laser = new Laser(this.acceleration, velocityModule.angle, this.speed);
-      laser.x = gameObject.x;
-      laser.y = gameObject.y;
+      let laser = new Laser(this.acceleration, velocityModule.angle, this.speed, gameObject.x, gameObject.y);
       gameObject.spawn(laser);
     }
   }

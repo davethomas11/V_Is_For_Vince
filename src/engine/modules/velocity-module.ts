@@ -1,6 +1,7 @@
 import Module from './module'
 import GameObject from '../models/game-object'
 import NumberTools from '../util/number-tools'
+import { PhysicsModule, PhysicsConversions } from './physics-module'
 
 export default class VelocityModule extends Module {
 
@@ -14,6 +15,7 @@ export default class VelocityModule extends Module {
   private acceleration: number;
   private deceleration: number;
   private _angle: number = 0;
+  private vector: PhysicsType2d.Vector2 = new PhysicsType2d.Vector2(0,0);
 
   constructor(maxVelocity: number = 0, acceleration: number = 0, deceleration: number = 0) {
     super();
@@ -25,12 +27,19 @@ export default class VelocityModule extends Module {
 
   update(gameObject: GameObject, deltaInMs: number): void {
 
-    var deltaInSeconds = deltaInMs / 1000;
+    let deltaInSeconds = deltaInMs / 1000;
     this.velocityX.update(deltaInSeconds, this.maxVelocityX);
     this.velocityY.update(deltaInSeconds, this.maxVelocityY);
 
-    gameObject.x += deltaInSeconds * this.velocityX.velocity;
-    gameObject.y += deltaInSeconds * this.velocityY.velocity;
+    let physicsModule = gameObject.getModule(PhysicsModule);
+    if (physicsModule != undefined) {
+      this.vector.x = PhysicsConversions.toMetres(this.velocityX.velocity);
+      this.vector.y = PhysicsConversions.toMetres(this.velocityY.velocity);
+      (physicsModule as PhysicsModule).setVelocity(this.vector);
+    } else {
+      gameObject.x += deltaInSeconds * this.velocityX.velocity;
+      gameObject.y += deltaInSeconds * this.velocityY.velocity;
+    }
 
     // if (this.velocityX.velocity != 0 || this.velocityY.velocity != 0) {
     //   this._angle = Math.atan2(this.velocityX.velocity, -this.velocityY.velocity) + this.ANGLE_OFFSET;

@@ -10,6 +10,7 @@ abstract class GameObject {
   x: number = 0;
   y: number = 0;
   context: GameContext | undefined;
+  spawner: GameObject | undefined;
 
   private modules: Array<Module> = [];
 
@@ -25,15 +26,18 @@ abstract class GameObject {
   }
 
   addModule(module: Module): void {
+    module.parent = this;
     this.modules.push(module);
   }
 
   removeModule(module: Module): void {
+    module.parent = undefined;
     ArrayUtils.remove(module, this.modules);
   }
 
   spawn(gameObject: GameObject): void {
     if (this.context) {
+      gameObject.spawner = this;
       EventBus.post(this.context, new SpawnEvent(gameObject));
     }
   }
@@ -44,12 +48,16 @@ abstract class GameObject {
 
   detach(context: GameContext): void {
     this.context = undefined;
+    this.spawner = undefined;
     this.modules.forEach(m => m.onDetach(this, context));
   }
 
   attach(context: GameContext): void {
     this.context = context;
     this.modules.forEach(m => m.onAttach(this, context));
+  }
+  
+  onContact(other: GameObject): void {
   }
 }
 

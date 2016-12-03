@@ -22,7 +22,7 @@ const tsProject = ts.createProject(tsConfigFile);
 /*
  * Run all build tasks.
  */
-gulp.task('default', [ 'ts', 'sass' ]);
+gulp.task('default', [ 'ts', 'js', 'sass' ]);
 
 /*
  * Delete all generated files.
@@ -42,6 +42,19 @@ gulp.task('ts', (cb) => {
       tsProject(),
       uglify(),
       sourcemaps.write('.'),
+      gulp.dest(tsPathOut)
+    ],
+    cb
+  );
+});
+
+/*
+ * Copy JS files.
+ */
+gulp.task('js', (cb) => {
+  pump(
+    [
+      gulp.src('src/**/*.js'),
       gulp.dest(tsPathOut)
     ],
     cb

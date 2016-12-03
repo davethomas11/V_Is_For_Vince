@@ -3,6 +3,8 @@ import GameContext from '../models/game-context'
 
 abstract class Module {
   
+  parent: GameObject | undefined;
+
   // Called when parent GameObject is updated by GameContext
   update(parent: GameObject, deltaMs: number): void {
     // implement if needed
