@@ -1,4 +1,4 @@
-import Module from './Module'
+import Module from './module'
 
 // System for tracking hit points, magic points or other types of game character points
 export default class PointModule extends Module {
