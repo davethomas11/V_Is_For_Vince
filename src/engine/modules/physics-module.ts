@@ -22,7 +22,7 @@ export class PhysicsConversions {
 
 export class PhysicsModule extends Module {
 
-  private body: PhysicsType2d.Dynamics.Body;
+  private body: PhysicsType2d.Dynamics.Body | undefined;
   private factory: BodyDefinitionFactory;
   private vector: PhysicsType2d.Vector2;
 
@@ -34,23 +34,30 @@ export class PhysicsModule extends Module {
 
   onAttach(gameObject: GameObject, context: GameContext): void {
     this.body = context.createPhysicsBody(this.factory.getBodyDefinition());
-    this.factory.getFixtures().forEach(f => { this.body.CreateFixtureFromDefinition(f) });
+    this.body.SetUserData(gameObject);
+    this.factory.getFixtures().forEach(f => { this.body!.CreateFixtureFromDefinition(f) });
   }
 
   onDetach(gameObject: GameObject, context: GameContext): void {
-    context.destroyPhysicBody(this.body);
+    this.body!.SetUserData(undefined);
+    context.destroyPhysicBody(this.body!);
+    this.body = undefined;
   }
 
   update(parent: GameObject, deltaMs: number): void {
-    parent.x = PhysicsConversions.toPixels(this.body.GetPosition().x);
-    parent.y = PhysicsConversions.toPixels(this.body.GetPosition().y);
+    if (this.body != null) {
+      parent.x = PhysicsConversions.toPixels(this.body.GetPosition().x);
+      parent.y = PhysicsConversions.toPixels(this.body.GetPosition().y);
+    }
   }
 
   applyForce(vector: PhysicsType2d.Vector2): void {
+    if (this.body != null)
     this.body.ApplyLinearImpulse(vector, this.body.GetLocalCenter())
   }
 
   setVelocity(vector: PhysicsType2d.Vector2): void {
+    if (this.body != null)
     this.body.SetLinearVelocity(vector);
   }
 }

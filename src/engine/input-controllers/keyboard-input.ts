@@ -63,7 +63,7 @@ export default class KeyboardController implements InputController {
   removeKeyboardMapping(mapping: KeyboardMapping): void {
     ArrayUtils.remove(mapping, this.mappings);
     this.hasDownHandler = this.hasUpHandler = this.hasPressHandler = 0;
-    this.mappings.forEach(this.assessmentOfMapping);
+    this.mappings.forEach((m) => this.assessmentOfMapping(m));
   }
 
   private assessmentOfMapping(mapping: KeyboardMapping): void {

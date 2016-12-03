@@ -43,6 +43,7 @@ abstract class Game implements GameContext {
 
     this.gravity = new PhysicsType2d.Vector2(0,0);
     this.physicsWorld = new PhysicsType2d.Dynamics.World(this.gravity);
+    this.physicsWorld.SetContactListener(new CollisionHandler());
   }
 
   abstract getUniqueGameName(): string;
@@ -173,3 +174,19 @@ abstract class Game implements GameContext {
 };
 
 export default Game
+
+class CollisionHandler extends PhysicsType2d.Dynamics.ContactListener {
+
+  BeginContact(contact: PhysicsType2d.Dynamics.Contacts.Contact): void {
+    super.BeginContact(contact);
+
+    let objectA = contact.GetFixtureA().GetBody().GetUserData() as GameObject;
+    let objectB = contact.GetFixtureB().GetBody().GetUserData() as GameObject;
+
+    if (objectA != undefined && objectB != undefined) {
+      objectA.onContact(objectB);
+      objectB.onContact(objectA);
+    }
+  }
+
+}

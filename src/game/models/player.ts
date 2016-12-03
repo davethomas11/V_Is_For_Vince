@@ -9,10 +9,17 @@ import { BasicKeyboardMovementMapping, Keyset } from '../../engine/input-control
 import KeyboardController from '../../engine/input-controllers/keyboard-input';
 import PlayerConfig from './player-config';
 import GameContext from '../../engine/models/game-context';
+import HitPointModule from '../modules/hitpoint-module';
 
 export default class Player extends GameObject implements BodyDefinitionFactory {
  
+  readonly LASER_ACCEL = 5000;
+  readonly LASER_SPEED = 750;
+  readonly HP_MAX = 50;
+
   private velocityModule: VelocityModule;
+  private hpModule: HitPointModule;
+
   private radius: number;
   private colorA: string;
   private colorB: string;
@@ -28,7 +35,9 @@ export default class Player extends GameObject implements BodyDefinitionFactory 
     this.colorA = config.colorA;
     this.colorB = config.colorB;
 
-    this.addModule(new LaserGunModule(config.fireKey, 5000, 750));
+    this.hpModule = new HitPointModule(this.HP_MAX);
+    this.addModule(this.hpModule);
+    this.addModule(new LaserGunModule(config.fireKey, this.LASER_ACCEL, this.LASER_SPEED));
     this.addModule(new PhysicsModule(this));
     this.velocityModule = new VelocityModule(config.speed, config.acceleration, config.deceleration);
     this.addModule(this.velocityModule);
@@ -73,6 +82,11 @@ export default class Player extends GameObject implements BodyDefinitionFactory 
     ctx.stroke();
     ctx.fill();
     ctx.closePath();
+
+    let hpBarTop = this.y - this.radius - 20;
+    let hpBarBottom = hpBarTop + 10;
+    let hpWidth = this.radius * 2 * (this.hpModule.points / this.hpModule.maxPoints);
+    ctx.fillRect(this.x - this.radius, hpBarTop, hpWidth, 10);
   }
 
   getBodyDefinition(): PhysicsType2d.Dynamics.BodyDefinition {
